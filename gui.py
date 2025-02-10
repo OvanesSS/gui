@@ -13,6 +13,8 @@ combo_values={1:[info.device for info in tools.comports()],
               5:['None', 'Even', 'Odd', 'Mark', 'Space']}
 combo_vars = {}
 
+
+
 def open_setfil():
     win_setfil = ctk.CTkToplevel(app)
     win_setfil.title('SETFIL')
