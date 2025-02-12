@@ -1,6 +1,8 @@
 import customtkinter as ctk
 import tkinter as tk
 from serial.tools import list_ports as tools
+import back
+import queue
 
 def test():
     print(combo_vars[1][1].get(), combo_vars[2][1].get(), combo_vars[3][1].get(), combo_vars[4][1].get(), combo_vars[5][1].get())
@@ -12,20 +14,21 @@ combo_values={1:[info.device for info in tools.comports()],
               4:['1', '2'],
               5:['None', 'Even', 'Odd', 'Mark', 'Space']}
 combo_vars = {}
+data_queue = queue.Queue()
 
 
+def set_window_location(win, win_width, win_height):
+    screen_width = app.winfo_screenwidth()
+    screen_height = app.winfo_screenheight()
+    x = (screen_width / 2) - (win_width / 2)
+    y = (screen_height / 2) - (win_height / 2)
+    win.geometry(f'{win_width}x{win_height}+{int(x)}+{int(y)}')
 
 def open_setfil():
     win_setfil = ctk.CTkToplevel(app)
     win_setfil.title('SETFIL')
     win_setfil.resizable(False, False)
-    w = 300
-    h = 170
-    ws = app.winfo_screenwidth()
-    hs = app.winfo_screenheight()
-    x = (ws / 2) - (w / 2)
-    y = (hs / 2) - (h / 2)
-    win_setfil.geometry(f'{w}x{h}+{int(x)}+{int(y)}')
+    set_window_location(win_setfil, 300, 170)
     frame_setfil = ctk.CTkFrame(master=win_setfil)
     frame_setfil.pack(expand=True, fill='both',padx=5, pady=5)
     ctk.CTkLabel(master=frame_setfil, text = 'Average:').grid(row=0, column=0, sticky = 'w', padx=5)
@@ -36,21 +39,17 @@ def open_setfil():
     win_setfil.grab_set()
     win_setfil.focus()
 
+
 ctk.set_appearance_mode('dark')
 ctk.set_default_color_theme('blue')
 app = ctk.CTk()
-app.title('Customtkinter')
+app.title('KF1')
 app.resizable(False, False)
-w = 650
-h = 505
-ws = app.winfo_screenwidth()
-hs = app.winfo_screenheight()
-x = (ws/2)-(w/2)
-y = (hs/2)-(h/2)
-app.geometry(f'{w}x{h}+{int(x)}+{int(y)}')
+set_window_location(app, 650, 505)
 
 for (key, value) in combo_values.items():
     combo_vars[key] = [value, tk.StringVar(value = value[0])]
+
 
 frame_parametrs = ctk.CTkFrame(master=app)
 frame_parametrs.grid(row=0, column = 0, pady=10, padx=10, sticky='ew')
