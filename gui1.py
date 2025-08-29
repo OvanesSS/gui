@@ -4,6 +4,12 @@ import back
 
 sg.theme('Dark Grey 16')
 
+"""setfil_layout = [
+    [sg.Text('Average:'), sg.Push(), sg.Input(key='-AVERAGE-', size=(15, 1))],
+    [sg.Text('Coefficient'), sg.Push(), sg.Input(key='-COEF-', size=(15, 1))],
+    [sg.Push(), sg.OK(size=(7, 1)), sg.Push()]
+]
+"""
 setfil_layout = [
     [sg.Text('Average:'), sg.Push(), sg.Input(key='-AVERAGE-', size=(15, 1))],
     [sg.Text('Coefficient'), sg.Push(), sg.Input(key='-COEF-', size=(15, 1))],
