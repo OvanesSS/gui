@@ -24,7 +24,7 @@ class ComPortProcessor:
                 data = self.port.read(24)
                 if data != b'':
                     self.queue.put(data)
-                    print(f'Из потока порта ', data, n)
+                    #print(f'Из потока порта ', data, n)
 
     def close_port(self):
         self.event.set()

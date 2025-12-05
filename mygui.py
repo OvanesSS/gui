@@ -97,7 +97,8 @@ class App(ctk.CTk):
             self.condition.set('Connect')
             self.port.close_port()
 
-    def open_setfil(self): pass
+    def open_setfil(self):
+        self.set = SetFil(port = self.port)
 
 
     def update_textbox(self):
@@ -113,6 +114,39 @@ class App(ctk.CTk):
         if self.port is not None:
             self.port.close_port()
         self.destroy()
+
+class SetFil(ctk.CTkToplevel):
+    def __init__(self, port = None, *args, **kwargs):
+        self.coef = tk.StringVar(value='0.')
+        self.avrg = tk.StringVar(value='0')
+        self.port = port
+        super().__init__(*args, **kwargs)
+        self.title('SETFIL')
+        self.resizable(False, False)
+        self.set_window_location(300, 170)
+        self.frame_setfil = ctk.CTkFrame(master=self)
+        self.frame_setfil.pack(expand=True, fill='both', padx=5, pady=5)
+        ctk.CTkLabel(master=self.frame_setfil, text='Average:').grid(row=0, column=0, sticky='w', padx=5)
+        self.avrg_ent = ctk.CTkEntry(master=self.frame_setfil, textvariable=self.avrg, width=280).grid(row=1, column=0, sticky='nsew', padx=5)
+        ctk.CTkLabel(master=self.frame_setfil, text='Coefficient:').grid(row=2, column=0, sticky='w', padx=5)
+        self.coef_ent = ctk.CTkEntry(master=self.frame_setfil, textvariable=self.coef, width=280).grid(row=3, column=0, sticky='nsew', padx=5)
+        self.send = ctk.CTkButton(master=self.frame_setfil, text='Send', command=self.send, width=280)
+        self.send.grid(row=4, column=0, sticky='nsew', padx=5, pady=[15, 5])
+        self.grab_set()
+        self.focus()
+
+    def set_window_location(self, win_width, win_height):
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+        x = (screen_width / 2) - (win_width / 2)
+        y = (screen_height / 2) - (win_height / 2)
+        self.geometry(f'{win_width}x{win_height}+{int(x)}+{int(y)}')
+
+    def send(self):
+        print(self.coef.get(), self.avrg.get())
+
+        self.destroy()
+
 
 
 if __name__ == '__main__':
