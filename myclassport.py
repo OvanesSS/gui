@@ -32,3 +32,9 @@ class ComPortProcessor:
     def start_thread(self):
         thread_port = threading.Thread(target=self.read_in_thread,)
         thread_port.start()
+
+    def write(self, data):
+        self.message = b''
+        for i in data:
+            self.message += i.to_bytes()
+            self.port.write(i.to_bytes())

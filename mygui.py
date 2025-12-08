@@ -17,8 +17,17 @@ class _SingletonWrapper:
 def singleton(cls):
     return _SingletonWrapper(cls)
 
+class SetWinLocationMixin():
+    def set_window_location(self, win_width, win_height):
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+        x = (screen_width / 2) - (win_width / 2)
+        y = (screen_height / 2) - (win_height / 2)
+        self.geometry(f'{win_width}x{win_height}+{int(x)}+{int(y)}')
+
+
 @singleton
-class App(ctk.CTk):
+class App(ctk.CTk, SetWinLocationMixin):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.labels_parametrs = {1: 'Port:', 2: 'Speed:', 3: 'Bits:', 4: 'Stop bits:', 5: 'Parity:'}
@@ -34,7 +43,7 @@ class App(ctk.CTk):
         ctk.set_default_color_theme('blue')
         self.title('KF1')
         self.resizable(False, False)
-        self.set_window_location(698, 680)
+        super().set_window_location(698, 680)
         self.protocol("WM_DELETE_WINDOW", self.window_exit)
 
         for (key, value) in self.combo_values.items():
@@ -44,13 +53,6 @@ class App(ctk.CTk):
         self._init_answ_win()
         self.timer_textbox()
         self.timer_textbox()
-
-    def set_window_location(self, win_width, win_height):
-        screen_width = self.winfo_screenwidth()
-        screen_height = self.winfo_screenheight()
-        x = (screen_width / 2) - (win_width / 2)
-        y = (screen_height / 2) - (win_height / 2)
-        self.geometry(f'{win_width}x{win_height}+{int(x)}+{int(y)}')
 
     def _init_config_menu(self):
         self.frame_config = ctk.CTkFrame(master=self)
@@ -74,7 +76,6 @@ class App(ctk.CTk):
         self.setfil = ctk.CTkButton(master=self.frame_commands, text='SETFIL', command=self.open_setfil)
         self.setfil.grid(row=2, column=0, pady=[0, 5])
 
-
     def _init_answ_win(self):
         self.frame_answers = ctk.CTkFrame(master=self)
         self.frame_answers.grid(row=0, column=1, padx=5, pady=5)
@@ -84,7 +85,6 @@ class App(ctk.CTk):
         ctk.CTkLabel(master=self.frame_answers, text='Responses to commands').grid(row=2, column=0)
         self.responses = ctk.CTkTextbox(master=self.frame_answers, activate_scrollbars=True, width=500, height=300, )
         self.responses.grid(row=3, column=0, padx=5, pady=[0, 5])
-
 
     def button_connect(self):
         if self.condition.get() == 'Connect':
@@ -100,7 +100,6 @@ class App(ctk.CTk):
     def open_setfil(self):
         self.set = SetFil(port = self.port)
 
-
     def update_textbox(self):
         while not self.port.queue.empty():
             self.all_ans.insert(0.0, ''.join(hex(ch) for ch in self.port.queue.get(timeout=1)) + '\n')
@@ -115,7 +114,7 @@ class App(ctk.CTk):
             self.port.close_port()
         self.destroy()
 
-class SetFil(ctk.CTkToplevel):
+class SetFil(ctk.CTkToplevel, SetWinLocationMixin):
     def __init__(self, port = None, *args, **kwargs):
         self.coef = tk.StringVar(value='0.')
         self.avrg = tk.StringVar(value='0')
@@ -123,7 +122,7 @@ class SetFil(ctk.CTkToplevel):
         super().__init__(*args, **kwargs)
         self.title('SETFIL')
         self.resizable(False, False)
-        self.set_window_location(300, 170)
+        super().set_window_location(300, 170)
         self.frame_setfil = ctk.CTkFrame(master=self)
         self.frame_setfil.pack(expand=True, fill='both', padx=5, pady=5)
         ctk.CTkLabel(master=self.frame_setfil, text='Average:').grid(row=0, column=0, sticky='w', padx=5)
@@ -135,16 +134,10 @@ class SetFil(ctk.CTkToplevel):
         self.grab_set()
         self.focus()
 
-    def set_window_location(self, win_width, win_height):
-        screen_width = self.winfo_screenwidth()
-        screen_height = self.winfo_screenheight()
-        x = (screen_width / 2) - (win_width / 2)
-        y = (screen_height / 2) - (win_height / 2)
-        self.geometry(f'{win_width}x{win_height}+{int(x)}+{int(y)}')
-
     def send(self):
-        print(self.coef.get(), self.avrg.get())
-
+        if self.port:
+            self.port.write([int(self.coef.get()),int(self.avrg.get())])
+            #print(self.coef.get()+ self.avrg.get())
         self.destroy()
 
 
