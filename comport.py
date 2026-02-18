@@ -28,27 +28,27 @@ class ComPortProcessor:
             else:
                 if not self.recMessage:
                     data = self.port.read(5)
-                    if data != b'' and data[:3] == message_constants.header:
+                    if data != b'' and data[:3] == message_constants.HEADER:
                         self.checksum = sum(data)
                         self.sizeMessage = data[4]
-                        if data[3] == message_constants.dorient_id: self.recMessage = message_constants.dorient
-                        if data[3] == message_constants.setfil_id: self.recMessage = message_constants.setfil
-                elif self.recMessage == message_constants.dorient:
+                        if data[3] == message_constants.DORIENT_ID: self.recMessage = message_constants.DORIENT
+                        if data[3] == message_constants.SETFIL_ID: self.recMessage = message_constants.SETFIL
+                elif self.recMessage == message_constants.DORIENT:
                     data = self.port.read(self.sizeMessage+1)
                     self.checksum = (self.checksum+sum(data[:self.sizeMessage]))%256
                     if self.checksum == data[-1]:
-                        roll, pitch, azimuth, *accelerations = struct.unpack(message_constants.dorient_format, data[:-1])
-                        self.recMessage += (f' Roll = {roll*message_constants.sensitivity:.2f}, '
-                                            f'Pitch = {pitch*message_constants.sensitivity:.2f}, '
-                                            f'Azimuth = {azimuth*message_constants.sensitivity:.2f}.')
+                        roll, pitch, azimuth, *accelerations = struct.unpack(message_constants.DORIENT_FORMAT, data[:-1])
+                        self.recMessage += (f' Roll = {roll*message_constants.SENSITIVITY:.2f}, '
+                                            f'Pitch = {pitch*message_constants.SENSITIVITY:.2f}, '
+                                            f'Azimuth = {azimuth*message_constants.SENSITIVITY:.2f}.')
                         self.queue.put(self.recMessage)
                     self.recMessage = ''
                     self.sizeMessage = None
-                elif self.recMessage == message_constants.setfil:
+                elif self.recMessage == message_constants.SETFIL:
                     data = self.port.read(self.sizeMessage + 1)
                     self.checksum = (self.checksum+sum(data[:self.sizeMessage]))%256
                     if self.checksum == data[-1]:
-                        average, coefficient, *others = struct.unpack(message_constants.setfil_format, data[:-1])
+                        average, coefficient, *others = struct.unpack(message_constants.SETFIL_FORMAT, data[:-1])
                         self.recMessage += f' Average = {average}, Coefficient = {coefficient/1000}'
                         self.queue.put(self.recMessage)
                     self.recMessage = ''
@@ -65,8 +65,8 @@ class ComPortProcessor:
         thread_port.start()
 
     def write(self, data):
-        self.message = struct.pack(message_constants.setfil_ans_format, *message_constants.header_to_bytes,
-                               message_constants.setfil_id, message_constants.setfil_count, *data)
+        self.message = struct.pack(message_constants.SETFIL_ANS_FORMAT, *message_constants.HEADER_TO_BYTES,
+                               message_constants.SETFIL_ID, message_constants.SETFIL_COUNT, *data)
         self.message += (sum(self.message)%256).to_bytes()
         print(self.message)
         self.port.write(self.message)

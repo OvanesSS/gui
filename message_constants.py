@@ -1,14 +1,14 @@
-sensitivity=360/65536
+SENSITIVITY=360/65536
 
-header_to_bytes = (b'\r',b'\n',b'~')
-header = b'\r\n~'
+HEADER_TO_BYTES = (b'\r',b'\n',b'~')
+HEADER = b'\r\n~'
 
-dorient = 'DORIENT'
-dorient_format = '>HHHHHHHHH'
-dorient_id = 112
+DORIENT = 'DORIENT'
+DORIENT_FORMAT = '>HHHHHHHHH'
+DORIENT_ID = 112
 
-setfil = 'SETFIL'
-setfil_format = '>H'
-setfil_ans_format = '>cccBBBH'
-setfil_id = 113
-setfil_count = 3
+SETFIL = 'SETFIL'
+SETFIL_FORMAT = '>H'
+SETFIL_ANS_FORMAT = '>cccBBBH'
+SETFIL_ID = 113
+SETFIL_COUNT = 3
